@@ -13,8 +13,8 @@ deployment:
   replicas: 1
 
 additional:
-  checkNewVersion: true
-  sendAnonymousUsage: true
+  checkNewVersion: false
+  sendAnonymousUsage: false
 
 rollingUpdate:
   maxUnavailable: 1
@@ -26,6 +26,7 @@ rollingUpdate:
 ## Use curly braces to pass values: `helm install --set="{--providers.kubernetesingress,--global.checknewversion=true}" ."
 additionalArguments:
   - --providers.kubernetesingress
+  - --providers.kubernetesingress.ingressendpoint.ip=10.65.28.70
   - --api.insecure
 
 # Environment variables to be passed to Traefik's binary
@@ -66,7 +67,7 @@ ports:
 # Options for the main traefik service, where the entrypoints traffic comes
 # from.
 service:
-  type: LoadBalancer
+  type: ClusterIP
   # Additional annotations (e.g. for cloud provider specific config)
   annotations: {}
   # Additional entries here will be added to the service spec. Cannot contains
@@ -129,6 +130,9 @@ resources: {}
   #   cpu: "300m"
   #   memory: "150Mi"
 affinity: {}
+
 nodeSelector:
   ic: traefik
+
 tolerations: []
+
