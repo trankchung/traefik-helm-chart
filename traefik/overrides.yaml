@@ -3,7 +3,7 @@ image:
   name: traefik
   tag: 2.1.3
 
-mode: deployment
+mode: daemonset
 
 #
 # Configure the deployment
@@ -24,8 +24,9 @@ rollingUpdate:
 # Configure Traefik entry points
 # Additional arguments to be passed at Traefik's binary
 ## Use curly braces to pass values: `helm install --set="{--providers.kubernetesingress,--global.checknewversion=true}" ."
-additionalArguments: []
-#  - "--providers.kubernetesingress"
+additionalArguments:
+  - --providers.kubernetesingress
+  - --api.insecure
 
 # Environment variables to be passed to Traefik's binary
 env: {}
@@ -46,18 +47,18 @@ ports:
     # You SHOULD NOT expose the traefik port on production deployments.
     # If you want to access it from outside of your cluster,
     # use `kubectl proxy` or create a secure ingress
-    expose: false
+    expose: true
     # The exposed port for this service
     exposedPort: 9000
   web:
-    port: 8000
+    port: 80
     expose: true
     exposedPort: 80
     # Use nodeport if set. This is useful if you have configured Traefik in a
     # LoadBalancer
     # nodePort: 32080
   websecure:
-    port: 8443
+    port: 443
     expose: true
     exposedPort: 443
   # nodePort: 32443
@@ -95,5 +96,6 @@ resources: {}
   #   cpu: "300m"
   #   memory: "150Mi"
 affinity: {}
-nodeSelector: {}
+nodeSelector:
+  ic: traefik
 tolerations: []

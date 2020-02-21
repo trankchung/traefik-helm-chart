@@ -1,5 +1,9 @@
 apiVersion: apps/v1
+{{- if eq .Values.mode "daemonset" }}
+kind: DaemonSet
+{{- else }}
 kind: Deployment
+{{- end }}
 metadata:
   name: {{ template "traefik.fullname" . }}
   labels:
@@ -79,6 +83,9 @@ spec:
         env:
           {{- toYaml . | nindent 10 }}
         {{- end }}
+      {{- if eq .Values.mode "daemonset" }}
+      hostNetwork: true
+      {{- end }}
       {{- with .Values.affinity }}
       affinity:
         {{- toYaml . | nindent 8 }}
