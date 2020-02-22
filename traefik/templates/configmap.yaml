@@ -1,39 +1,15 @@
----
+{{- if .Values.useConfigFile }}
 apiVersion: v1
 kind: ConfigMap
 metadata:
   name: traefik
 data:
+  {{- with .Values.traefikToml }}
+  traefik.toml: |
+  {{- . | nindent 4 }}
+  {{- end}}
+  {{- with .Values.traefikYaml }}
   traefik.yaml: |
-    ---
-    global:
-      checkNewVersion: false
-      sendAnonymousUsage: false
-    api:
-      insecure: true
-      dashboard: true
-    ping:
-      entryPoint: traefik
-
-    entryPoints:
-      traefik:
-        address: ":9000"
-      web:
-        address: ":80"
-
-      websecure:
-        address: ":443"
-    providers:
-      kubernetesIngress:
-        ingressClass: traefik
-
-    certificatesResolvers:
-      letsencrypt:
-        acme:
-          email: chung.k.tran@gmail.com
-          storage: acme.json
-          httpChallenge:
-            entryPoint: web
-
-    log:
-      level: WARN
+  {{- . | nindent 4 }}
+  {{- end}}
+{{- end }}
